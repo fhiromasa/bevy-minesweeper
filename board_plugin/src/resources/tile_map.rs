@@ -1,5 +1,6 @@
 use super::tile::Tile;
 use crate::components::coordinates::Coordinates;
+use rand::{thread_rng, Rng};
 use std::ops::{Deref, DerefMut};
 
 // Delta coordinates for all 8 square neighbors
@@ -47,6 +48,38 @@ impl TileMap {
         }
     }
 
+    pub fn set_bomb(&mut self, bomb_count: u16) {
+        self.bomb_count = bomb_count;
+        let mut remaining_bombs = bomb_count;
+        let mut rng = thread_rng();
+        // bombの配置
+        while remaining_bombs > 0 {
+            let (x, y) = (
+                rng.gen_range(0..self.width as usize),
+                rng.gen_range(0..self.height as usize),
+            );
+            if let Tile::Empty = self[y][x] {
+                self[y][x] = Tile::Bomb;
+                remaining_bombs -= 1
+            }
+        }
+        // bomb周囲の数の配置
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let coord = Coordinates { x, y };
+                if self.is_bomb_at(coord) {
+                    continue;
+                }
+                let num = self.bomb_count_at(coord);
+                if num == 0 {
+                    continue;
+                }
+                let tile = &mut self[y as usize][x as usize];
+                *tile = Tile::BombNeighbor(num);
+            }
+        }
+    }
+
     pub fn safe_square_at(&self, coordinates: Coordinates) -> impl Iterator<Item = Coordinates> {
         SQUARE_COORDINATES
             .iter()
@@ -59,7 +92,7 @@ impl TileMap {
             return false;
         }
 
-        self.map[coordinates.x as usize][coordinates.y as usize].is_bomb()
+        self.map[coordinates.y as usize][coordinates.x as usize].is_bomb()
     }
 
     pub fn bomb_count_at(&self, coordinates: Coordinates) -> u8 {
