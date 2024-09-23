@@ -1310,6 +1310,7 @@ dependencies = [
  "bevy",
  "bevy-inspector-egui",
  "colored",
+ "log",
  "rand",
  "serde",
 ]
