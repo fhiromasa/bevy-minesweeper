@@ -1,5 +1,5 @@
 #[cfg(feature = "debug")]
-use colored::Coloroze;
+use colored::Colorize;
 
 /// Enum describing a Minesweeper tile
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -19,9 +19,9 @@ impl Tile {
 
     #[cfg(feature = "debug")]
     pub fn console_output(&self) -> String {
-        format!(
+        let var_name = format!(
             "{}",
-            match Self {
+            match self {
                 Tile::Bomb => "*".bright_red(),
                 Tile::BombNeighbor(v) => match v {
                     1 => "1".cyan(),
@@ -31,6 +31,7 @@ impl Tile {
                 },
                 Tile::Empty => " ".normal(),
             }
-        )
+        );
+        var_name
     }
 }
