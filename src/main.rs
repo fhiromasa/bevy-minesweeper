@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use board_plugin::BoardPlugin;
 
 #[cfg(feature = "debug")]
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
@@ -18,6 +19,7 @@ fn main() {
         primary_window,
         ..default()
     }));
+    app.add_plugins(BoardPlugin);
 
     #[cfg(feature = "debug")]
     app.add_plugins(WorldInspectorPlugin::new());
